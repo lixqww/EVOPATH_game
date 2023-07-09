@@ -5,6 +5,9 @@ pg.init()
 clock = pg.time.Clock()
 
 pg.display.set_caption("EVOPATH")
+bg_sound = pg.mixer.Sound('sounds/bg_music.mp3') # загрузили фоновый звук приложения
+bg_sound.play()
+
 # подгрузить иконку
 width = 700
 heigt = 283
