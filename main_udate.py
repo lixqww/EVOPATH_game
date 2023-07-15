@@ -54,7 +54,7 @@ run_game = True # переменная-флаг для основного цик
 while run_game:
 
     game_screen.blit(bg_game, (bg_x,0)) # отобразили фоновое изображение в 0, 0 координатах
-    game_screen.blit(bg_game, (bg_x + 700, 0))  # отобразили фоновое изображение в координатах икс + 900 (900- кол-во пискселей в ширину экрана)
+    game_screen.blit(bg_game, (bg_x + 700, 0))  # отобразили фоновое изображение в координатах икс + 700 (700- кол-во пискселей в ширину экрана)
 
     if game_play == True:
 
@@ -129,9 +129,8 @@ while run_game:
 
         pg.display.update()
     else:
-        game_screen.fill('BLACK')
-        #game_screen.blit(lose, (350,300))
-        #game_screen.blit(restart, restart_rect)
+        # экран проигрыша
+      
 
         # Цикл закрытия приложения
 
