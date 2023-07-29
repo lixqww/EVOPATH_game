@@ -18,12 +18,15 @@ pg.display.set_icon(icon_game)  # установили изображение "�
 
 # Описание объектов игры (персонаж, враг, фон)
 bg_game = pg.image.load('images/bg/bg_forest.jpg')  # загрузили фоновое изображение
-
+bg_game_lose = pg.image.load('images/bg/bg_forest_2.jpg')
 enemy = pg.image.load('images/enemy/enemy.png')  # загрузили изображение врага
 bullet = pg.image.load('images/bullets/bullets.png')
-
+n_bullet = pg.image.load('images/bullets/bullets_2.png')
+replenish = pg.image.load('images/bullets/replenish.png')
 bullets = []
+
 enemy_list_in_game = []
+replenish_list_in_game = []
 walk_right = [pg.image.load('images/player/lil(1)r.png'),
               pg.image.load('images/player/lil(2)r.png'),
               pg.image.load('images/player/lil(3)r.png'), ]  # создали список из "спрайтсов" основного игрока вправо
@@ -42,8 +45,12 @@ restart = my_font.render(' Restart' , False,(26, 145, 88))
 
 restart_rect = restart.get_rect(topleft=(270 ,180))
 
+
 enemy_timer = pg.USEREVENT + 1
 pg.time.set_timer(enemy_timer, 3500)
+
+replenish_timer = pg.USEREVENT +3
+pg.time.set_timer(replenish_timer , 10000)
 
 bullet_count = 5
 player_count = 0  # переменная счетчик для перебора спрайтсов в цикле
@@ -56,8 +63,44 @@ run_game = True  # переменная-флаг для основного ци�
 while run_game:
 
     game_screen.blit(bg_game, (bg_x, 0))  # отобразили фоновое изображение в 0, 0 координатах
-    game_screen.blit(bg_game, (
-    bg_x + 700, 0))  # отобразили фоновое изображение в координатах икс + 700 (700- кол-во пискселей в ширину экрана)
+    game_screen.blit(bg_game, (bg_x + 700, 0))  # отобразили фоновое изображение в координатах икс + 700 (700- кол-во пискселей в ширину экрана)
+
+    if bullet_count == 5:
+        game_screen.blit(bullet, (10, 10))
+        game_screen.blit(bullet, (50, 10))
+        game_screen.blit(bullet, (90, 10))
+        game_screen.blit(bullet, (130, 10))
+        game_screen.blit(bullet, (170, 10))
+    elif bullet_count == 4:
+        game_screen.blit(bullet, (10, 10))
+        game_screen.blit(bullet, (50, 10))
+        game_screen.blit(bullet, (90, 10))
+        game_screen.blit(bullet, (130, 10))
+        game_screen.blit(n_bullet, (170, 10))
+    elif bullet_count == 3:
+        game_screen.blit (bullet,(10, 10))
+        game_screen.blit(bullet, (50, 10))
+        game_screen.blit(bullet, (90, 10))
+        game_screen.blit(n_bullet, (130, 10))
+        game_screen.blit(n_bullet, (170, 10))
+    elif bullet_count == 2:
+        game_screen.blit(bullet, (10, 10))
+        game_screen.blit(bullet, (50, 10))
+        game_screen.blit(n_bullet, (90, 10))
+        game_screen.blit(n_bullet, (130, 10))
+        game_screen.blit(n_bullet, (170, 10))
+    elif bullet_count == 1:
+        game_screen.blit(bullet,(10, 10))
+        game_screen.blit(n_bullet, (50,10))
+        game_screen.blit(n_bullet, (90, 10))
+        game_screen.blit(n_bullet, (130, 10))
+        game_screen.blit(n_bullet, (170, 10))
+    else:
+        game_screen.blit(n_bullet,(10 ,10))
+        game_screen.blit(n_bullet, (50, 10))
+        game_screen.blit(n_bullet, (90, 10))
+        game_screen.blit(n_bullet, (130, 10))
+        game_screen.blit(n_bullet, (170, 10))
 
     if game_play == True:
 
@@ -74,11 +117,23 @@ while run_game:
                 if player_rect.colliderect(el):
                     game_play = False
 
+
+        if replenish_list_in_game:
+            for (i ,el) in enumerate(replenish_list_in_game):
+                game_screen.blit(replenish,(el))
+                el.x -= 12
+
+                if el.x < -12:
+                    replenish_list_in_game.pop(i)
+
+                if player_rect.colliderect(el):
+                    bullets = 5
+
+
         pressed_keys = pg.key.get_pressed()  # переменная pressed_keys проверяет на действие нажатие клавиши
 
         if pressed_keys[pg.K_LEFT]:
-            game_screen.blit(walk_left[player_count], (
-            player_x, player_y))  # отобразили спрайтс игрока с индексом [счетчик] в координатах из "дано"
+            game_screen.blit(walk_left[player_count], (player_x, player_y))  # отобразили спрайтс игрока с индексом [счетчик] в координатах из "дано"
         else:
             game_screen.blit(walk_right[player_count], (player_x, player_y))
 
@@ -94,19 +149,25 @@ while run_game:
        # if pressed_keys[pg.K_w]:
         #    bullets.append(bullet.get_rect(topleft=(player_x + 80, player_y + 20)))
 
-        if bullets:
-            for (i, el) in enumerate(bullets):
-                game_screen.blit(bullet, (el.x, el.y))
-                el.x += 4
+        #if bullets:
+          #  for (i, el) in enumerate(bullets):
+           #     game_screen.blit(bullet, (el.x, el.y))
+            #    el.x += 4
 
-                if el.x > 910:
-                    bullets.pop(i)
+              #  if el.x > 910:
+               #     bullets.pop(i)
+#
+ #               if enemy_list_in_game:
+  #                  for (index, enemy_el) in enumerate(enemy_list_in_game):
+   #                     if el.colliderect(enemy_el):
+    #                        enemy_list_in_game.pop(index)
+     #                       bullets.pop(i)
 
-                if enemy_list_in_game:
-                    for (index, enemy_el) in enumerate(enemy_list_in_game):
-                        if el.colliderect(enemy_el):
-                            enemy_list_in_game.pop(index)
-                            bullets.pop(i)
+      #          if replenish_list_in_game:
+       #             for (index_b, enemy_el_b) in enumerate(replenish_list_in_game):
+        #                if el.colliderect(enemy_el_b):
+         #                   replenish_list_in_game.pop(index_b)
+          #                  bullets.pop(i)
 
         if pressed_keys[pg.K_LEFT] and player_x > 50:  # если нажата кнопка влево и координата игорка по иксу больше 50
             player_x -= player_speed  # смещение координат игорка по иксу на кол-во пикселей указанных как скорость игрока влево
@@ -131,9 +192,10 @@ while run_game:
 
         pg.display.update()
     else:
-        game_screen.fill(('BLACK'))
+        game_screen.blit(bg_game_lose, (0,0 ))
         game_screen.blit(lose, (270, 110))
         game_screen.blit(restart, restart_rect)
+
 
         mouse = pg.mouse.get_pos()
         if restart_rect.collidepoint(mouse) and pg.mouse.get_pressed()[0]:
@@ -142,9 +204,7 @@ while run_game:
             enemy_list_in_game.clear()
             bullets.clear()
             bullet_count = 5
-
-    # экран проигрыша
-
+            replenish_list_in_game.clear()
     # Цикл закрытия приложения
 
     for event in pg.event.get():
@@ -152,8 +212,12 @@ while run_game:
             run_game = False
             pg.quit
 
+        if event.type == replenish_timer:
+            replenish_list_in_game.append(replenish.get_rect(topleft=(900, 120)))
+
+
         if event.type == enemy_timer:
-            enemy_list_in_game.append(enemy.get_rect(topleft=(705, 220)))
+            enemy_list_in_game.append(enemy.get_rect(topleft=(705, 200)))
 
         if event.type == pg.KEYUP and game_play and event.key == pg.K_w and bullet_count > 0:
             bullets.append(bullet.get_rect(topleft= (player_x +80 , player_y +20 )))
