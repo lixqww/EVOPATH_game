@@ -24,11 +24,17 @@ bullet = pg.image.load('images/bullets/bullets.png')
 update_bullet = pg.image.load('images/bullets/replenish.png')
 not_bullet= pg.image.load('images/bullets/bullets_2.png')
 shield= pg.image.load('images/bullets/shield.png')
+life= [pg.image.load('images/bullets/life.png'),
+       pg.image.load('images/bullets/life2.png')]
+n_life=[pg.image.load('images/bullets/n_life.png') ,
+        pg.image.load('images/bullets/n_life (2).png')]
+
 bullets = []
 enemy_list_in_game=[]
 bullet_list_ingame=[]
 shield_list_in_game=[]
-
+life_list_in_game=[]
+n_life_list_in_game=[]
 walk_right = [pg.image.load('images/player/lil(1)r.png'),
               pg.image.load('images/player/lil(2)r.png'),
               pg.image.load('images/player/lil(3)r.png')]
@@ -56,9 +62,13 @@ pg.time.set_timer(bullet_timer,25000)
 shield_timer = pg.USEREVENT + 5
 pg.time.set_timer(shield_timer,7000)
 
+life_timer = pg.USEREVENT +7
+pg.time.set_timer(life_timer, 8200)
+
 bullet_count = 5
 player_count = 0 # переменная счетчик для перебора спрайтсов в цикле
 jump_count = 8 # высота передвижения игрока в пикселях
+life_count = 1
 
 game_play = True # переменная-флаг для определения состояния игры (запущена или проигрыш)
 is_jump = False # переменная-флаг для определения прыжка
@@ -68,6 +78,15 @@ while run_game:
 
     game_screen.blit(bg_game, (bg_x,0)) # отобразили фоновое изображение в 0, 0 координатах
     game_screen.blit(bg_game, (bg_x + 700, 0))  # отобразили фоновое изображение в координатах икс + 900 (900- кол-во пискселей в ширину экрана)
+
+
+    if life_list_in_game == 2:
+        game_screen.blit(life ,(10 , 90))
+        game_screen.blit(life , (10 ,130))
+
+    #else life_list_in_game == 1:
+     ##   game_screen.blit(life (10 , 90)
+       # game_screen.blit(n_life ,(10 , 130))
 
     if bullet_count == 5:
         game_screen.blit(bullet, (10, 10))
@@ -109,6 +128,7 @@ while run_game:
 
     if game_play == True:
 
+
         player_rect = walk_left[0].get_rect(topleft=(player_x,player_y))
 
         if shield_list_in_game:
@@ -120,6 +140,7 @@ while run_game:
                     shield_list_in_game.pop(i)
 
                 if player_rect.colliderect(el):
+                    life_count = 10
                     shield_list_in_game.pop(i)
 
         if bullet_list_ingame: # ([x, y] [x1,y2])
@@ -134,6 +155,16 @@ while run_game:
                     bullet_count = 5
                     bullet_list_ingame.pop(i)
 
+            if life_list_in_game:
+                for (i,el) in enumerate (life_list_in_game):
+                    game_screen.blit(life, el)
+                    el.x -=15
+
+                    if el.x < -15:
+                        life_list_in_game.pop(i)
+
+                    if player_rect.colliderect(el):
+                        life_list_in_game.pop(i)
 
         if enemy_list_in_game: # ([x, y] [x1,y2])
             for (i,el) in enumerate (enemy_list_in_game):
@@ -144,7 +175,12 @@ while run_game:
                     enemy_list_in_game.pop(i)
 
                 if player_rect.colliderect(el):
-                    game_play = False
+                    if life_count != 0:
+                        print('yeah')
+                        life_count -=1
+                    else:
+                        game_play = False
+
 
 
         pressed_keys = pg.key.get_pressed() # переменная pressed_keys проверяет на действие нажатие клавиши
@@ -177,17 +213,6 @@ while run_game:
                         if el.colliderect(enemy_el):
                             enemy_list_in_game.pop(index)
                             bullets.pop(i)
-
-               # if shield_list_in_game:
-                #    for(index_s , el ) in enumerate(shield_list_in_game):
-                 #       if el.colliderect(el):
-                  #          shield_list_in_game.pop(index)
-                   #         bullets.pop(i)
-
-              #  if update_bullet:
-                 #   for(index,el) in enumerate(update_bullet):
-                     #   if el.colliderect(el):
-                      #      update_bullet.pop(index)
 
 
                 if bullet_list_ingame:
@@ -240,6 +265,7 @@ while run_game:
         if event.type == pg.QUIT:
             run_game = False
             pg.quit
+
 
         if event.type == enemy_timer:
             enemy_list_in_game.append(enemy.get_rect(topleft=(705, 200)))
